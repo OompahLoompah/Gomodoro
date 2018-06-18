@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"log"
 
 	t "github.com/OompahLoompah/Gomodoro/pkg/timer"
 	"github.com/0xAX/notificator"
@@ -47,7 +48,10 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
         Run: func(cmd *cobra.Command, args []string) {
 		if seconds > 0 {
-			t.Timer(seconds, notifier)
+			err := t.Timer(seconds, notifier)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	},
 }
