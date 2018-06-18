@@ -2,13 +2,30 @@ package timer
 
 import (
 	"time"
+	json "encoding/json"
+
+	metrics "github.com/OompahLoompah/Gomodoro/pkg/metrics"
 )
 
-type fn func() 
+type timerMetric struct {
+	seconds   int
+	cancelled bool
+}
 
-func Timer(t int, notifier fn) {
+func Timer(t int, notifier func()) error {
 	time.Sleep(time.Duration(t) * time.Second)
 	if notifier != nil {
 		notifier()
 	}
+
+	w := timerMetric{t, false}
+	m, err := json.Marshal(w)
+	if err != nil {
+		return err
+	}
+	err = metrics.Push(m, "")
+	if err != nil {
+		return err
+	}
+	return nil
 }
