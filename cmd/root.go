@@ -23,8 +23,9 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"time"
+	"log"
 
+	t "github.com/OompahLoompah/Gomodoro/pkg/timer"
 	"github.com/0xAX/notificator"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -46,9 +47,11 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
         Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("set called")
 		if seconds > 0 {
-			setTimer(seconds)
+			err := t.Timer(seconds, notifier)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	},
 }
@@ -101,10 +104,9 @@ func initConfig() {
 	}
 }
 
-func setTimer(t int) {
+func notifier() {
 	notify = notificator.New(notificator.Options{
 		AppName:          "Pomodoro Timer",
 	})
-	time.Sleep(time.Duration(t) * time.Second)
 	notify.Push("", "Time's up!", "", notificator.UR_CRITICAL)
 }
