@@ -8,8 +8,8 @@ import (
 )
 
 type timerMetric struct {
-	seconds   int
-	cancelled bool
+	Seconds   int
+	Cancelled bool
 }
 
 func Timer(t int, notifier func()) error {
