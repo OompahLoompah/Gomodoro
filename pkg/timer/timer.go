@@ -12,20 +12,22 @@ type timerMetric struct {
 	Cancelled bool
 }
 
-func Timer(t int, notifier func()) error {
+func Timer(t int, notifier func(), sendMetrics bool) error {
 	time.Sleep(time.Duration(t) * time.Second)
 	if notifier != nil {
 		notifier()
 	}
 
-	w := timerMetric{t, false}
-	m, err := json.Marshal(w)
-	if err != nil {
-		return err
-	}
-	err = metrics.Push(m, "")
-	if err != nil {
-		return err
+	if sendMetrics {
+		w := timerMetric{t, false}
+		m, err := json.Marshal(w)
+		if err != nil {
+			return err
+		}
+		err = metrics.Push(m, "")
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

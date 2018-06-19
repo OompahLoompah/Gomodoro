@@ -33,6 +33,7 @@ import (
 )
 
 var seconds int
+var breakSeconds int
 var notify *notificator.Notificator
 var cfgFile string
 
@@ -48,7 +49,13 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
         Run: func(cmd *cobra.Command, args []string) {
 		if seconds > 0 {
-			err := t.Timer(seconds, notifier)
+			err := t.Timer(seconds, notifier, true)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		if breakSeconds > 0 {
+			err := t.Timer(breakSeconds, nil, false)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -68,6 +75,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().IntVarP(&seconds, "time", "T", 0, "time to count down from")
+	rootCmd.Flags().IntVarP(&breakSeconds, "break", "b", 0, "Break time to count down from")
+	rootCmd.Flags().IntVarP(&breakSeconds, "long-break", "B", 0, "Long break time to count down from")
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
