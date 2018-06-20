@@ -70,8 +70,6 @@ func init() {
 	rootCmd.Flags().IntVarP(&seconds, "time", "T", 0, "time to count down from")
 	rootCmd.Flags().IntVarP(&breakSeconds, "break", "b", 0, "Break time to count down from")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pomodoro.yaml)")
-
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func initConfig() {
