@@ -35,6 +35,7 @@ import (
 var seconds int
 var breakSeconds int
 var notify *notificator.Notificator
+var pomo bool
 var cfgFile string
 
 var rootCmd = &cobra.Command{
@@ -43,16 +44,29 @@ var rootCmd = &cobra.Command{
 	Long: `A pomodoro-inspired timer application that supports recording sessions
 	to metrics servers via JSON.`,
         Run: func(cmd *cobra.Command, args []string) {
-		if seconds > 0 {
-			err := t.Timer(seconds, notifier, true)
-			if err != nil {
-				log.Fatal(err)
+		if pomo {
+			for ;; {
+				err := t.Timer(1500, notifier, true)
+				if err != nil {
+					log.Fatal(err)
+				}
+				err = t.Timer(300, nil, false)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
-		}
-		if breakSeconds > 0 {
-			err := t.Timer(breakSeconds, nil, false)
-			if err != nil {
-				log.Fatal(err)
+		} else {
+			if seconds > 0 {
+				err := t.Timer(seconds, notifier, true)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			if breakSeconds > 0 {
+				err := t.Timer(breakSeconds, nil, false)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 		}
 	},
@@ -69,6 +83,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().IntVarP(&seconds, "time", "T", 0, "time to count down from")
 	rootCmd.Flags().IntVarP(&breakSeconds, "break", "b", 0, "Break time to count down from")
+	rootCmd.Flags().BoolVarP(&pomo, "pomodoro", "p", false, "Run continuous pomodoro")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pomodoro.yaml)")
 }
 
