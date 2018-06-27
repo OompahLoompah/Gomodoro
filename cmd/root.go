@@ -22,20 +22,21 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 
-	t "github.com/OompahLoompah/Gomodoro/pkg/timer"
 	"github.com/0xAX/notificator"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	homedir "github.com/mitchellh/go-homedir"
+	t "github.com/OompahLoompah/Gomodoro/pkg/timer"
 )
 
 var seconds int
 var breakSeconds int
 var notify *notificator.Notificator
 var pomo bool
+var tag string
 var cfgFile string
 
 var rootCmd = &cobra.Command{
@@ -46,24 +47,24 @@ var rootCmd = &cobra.Command{
         Run: func(cmd *cobra.Command, args []string) {
 		if pomo {
 			for ;; {
-				err := t.Timer(1500, notifier, true)
+				err := t.Timer(1500, notifier, true, tag)
 				if err != nil {
 					log.Fatal(err)
 				}
-				err = t.Timer(300, nil, false)
+				err = t.Timer(300, nil, false, tag)
 				if err != nil {
 					log.Fatal(err)
 				}
 			}
 		} else {
 			if seconds > 0 {
-				err := t.Timer(seconds, notifier, true)
+				err := t.Timer(seconds, notifier, true, tag)
 				if err != nil {
 					log.Fatal(err)
 				}
 			}
 			if breakSeconds > 0 {
-				err := t.Timer(breakSeconds, nil, false)
+				err := t.Timer(breakSeconds, nil, false, tag)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -84,6 +85,7 @@ func init() {
 	rootCmd.Flags().IntVarP(&seconds, "time", "T", 0, "time to count down from")
 	rootCmd.Flags().IntVarP(&breakSeconds, "break", "b", 0, "Break time to count down from")
 	rootCmd.Flags().BoolVarP(&pomo, "pomodoro", "p", false, "Run continuous pomodoro")
+	rootCmd.Flags().StringP(tag, "c", "", "Session tag")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pomodoro.yaml)")
 }
 
