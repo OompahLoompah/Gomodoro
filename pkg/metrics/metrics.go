@@ -3,9 +3,10 @@ package metrics
 import (
 	"os"
 	"net"
+	"time"
 )
 
-func Push(message []byte, srv string) error{
+func push(message []byte, srv string) error{
 	if srv == "" {
 		addr := os.Getenv("GOMO_METRICS_SRV")
 		if addr == "" {
@@ -36,4 +37,27 @@ func Push(message []byte, srv string) error{
 		return err
 	}
         return nil
+}
+
+func Log(measurement string, tags map[]string, fieldSet map[]string, t time.Time) error{
+	msg := measurement
+
+	for key, value := range tags {
+		msg = msg + "," + key + "=" + value
+	}
+
+	msg = msg + " "
+
+	for key, value := range fieldSet {
+		msg = msg + key + "=" + value + ","
+	}
+
+	msg = msg[:len(msg)-1]
+
+	if t == nil {
+		t = time.Now()
+	}
+
+	msg = fmt.Sprintf("%s%d", msg, t.UnixNano())
+	push(msg, "")
 }
