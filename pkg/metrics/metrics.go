@@ -1,8 +1,9 @@
 package metrics
 
 import (
-	"os"
+	"fmt"
 	"net"
+	"os"
 	"time"
 )
 
@@ -39,7 +40,7 @@ func push(message []byte, srv string) error{
         return nil
 }
 
-func Log(measurement string, tags map[]string, fieldSet map[]string, t time.Time) error{
+func Log(measurement string, tags map[string]string, fieldSet map[string]string, t *time.Time) error{
 	msg := measurement
 
 	for key, value := range tags {
@@ -55,9 +56,14 @@ func Log(measurement string, tags map[]string, fieldSet map[]string, t time.Time
 	msg = msg[:len(msg)-1]
 
 	if t == nil {
-		t = time.Now()
+		*t = time.Now()
 	}
 
 	msg = fmt.Sprintf("%s%d", msg, t.UnixNano())
-	push(msg, "")
+	err := push([]byte(msg), "")
+
+	if err != nil{
+		return err
+	}
+	return nil
 }
