@@ -8,6 +8,7 @@ import (
 )
 
 func push(message []byte, srv string) error{
+	fmt.Println("Message is: " + string(message))
 	if srv == "" {
 		addr := os.Getenv("GOMO_METRICS_SRV")
 		if addr == "" {
@@ -37,6 +38,7 @@ func push(message []byte, srv string) error{
 	if err != nil {
 		return err
 	}
+	fmt.Println("Logged metric")
         return nil
 }
 
@@ -53,13 +55,14 @@ func Log(measurement string, tags map[string]string, fieldSet map[string]string,
 		msg = msg + key + "=" + value + ","
 	}
 
-	msg = msg[:len(msg)-1]
+	msg = msg[:len(msg)-1] + " "
 
 	if t == nil {
 		*t = time.Now()
 	}
 
 	msg = fmt.Sprintf("%s%d", msg, t.UnixNano())
+	fmt.Println("Message is: " + string(msg))
 	err := push([]byte(msg), "")
 
 	if err != nil{
