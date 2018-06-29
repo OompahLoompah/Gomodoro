@@ -27,8 +27,6 @@ import (
 
 	"github.com/0xAX/notificator"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	homedir "github.com/mitchellh/go-homedir"
 	t "github.com/OompahLoompah/Gomodoro/pkg/timer"
 )
 
@@ -37,7 +35,6 @@ var breakSeconds int
 var notify *notificator.Notificator
 var pomo bool
 var tag string
-var cfgFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "gomodoro",
@@ -81,33 +78,11 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().IntVarP(&seconds, "time", "T", 0, "time to count down from")
 	rootCmd.Flags().IntVarP(&breakSeconds, "break", "b", 0, "Break time to count down from")
 	rootCmd.Flags().BoolVarP(&pomo, "pomodoro", "p", false, "Run continuous pomodoro")
 	rootCmd.Flags().StringVarP(&tag, "comment", "c", "", "Session tag")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pomodoro.yaml)")
-}
-
-func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".gomodoro")
-	}
-
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 }
 
 func notifier() {
