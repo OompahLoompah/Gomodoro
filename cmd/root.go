@@ -82,7 +82,6 @@ func init() {
 	rootCmd.Flags().IntVarP(&breakSeconds, "break", "b", 0, "Break time to count down from")
 	rootCmd.Flags().BoolVarP(&pomo, "pomodoro", "p", false, "Run continuous pomodoro")
 	rootCmd.Flags().StringVarP(&tag, "comment", "c", "", "Session tag")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pomodoro.yaml)")
 }
 
 func notifier() {
