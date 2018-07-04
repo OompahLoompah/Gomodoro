@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var path string = "/Users/seanheuer/.gomodoro_cache"
+var path string
 
 func push(msg []byte, srv string) error{
 	fmt.Println("Message is: " + string(msg))
@@ -49,6 +49,7 @@ func push(msg []byte, srv string) error{
 }
 
 func Log(measurement string, tags map[string]string, fieldSet map[string]string, t *time.Time) error{
+	path = os.Getenv("HOME") + "/.gomodoro_cache"
 	msg := measurement
 
 	for key, value := range tags {
@@ -87,6 +88,7 @@ func cache(msg []byte) error {
 			fmt.Println(err)
 			return err
 		}
+		defer f.Close()
 		f.Write(msg)
 	} else {
 		f, err := os.OpenFile(path, os.O_RDWR, 0000) //file perms shouldn't matter here since file exists
@@ -95,6 +97,7 @@ func cache(msg []byte) error {
 			fmt.Println(err)
 			return err
 		}
+		defer f.Close()
 		_, err = f.Seek(0,2)
 		if err != nil {
 			return err
@@ -110,13 +113,3 @@ func cache(msg []byte) error {
 	}
 	return nil
 }
-
-//func flushCache() error {
-	//f, err := os.Open(path)
-	//if err != nil {
-	//	return err
-	//}
-	//msg = f
-
-	//need a read that reads to \n and nothing more... 
-//}
