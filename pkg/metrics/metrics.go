@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"bufio"
 	"fmt"
 	"net"
 	"os"
@@ -75,6 +76,10 @@ func Log(measurement string, tags map[string]string, fieldSet map[string]string,
 	if err != nil{
 		return err
 	}
+	err = flushCache()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -110,6 +115,26 @@ func cache(msg []byte) error {
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func flushCache() error {
+	var line []byte = []byte(" ")
+	fmt.Println("Flushing")
+	f, err := os.Open(path)
+	if err != nil {
+		return err //TODO Check if file exists. If it does, return err, if not, ignore.
+	}
+	defer f.Close()
+	reader := bufio.NewReader(f)
+	for len(line) > 0 {
+		fmt.Println("Flush")
+		line, _, err = reader.ReadLine()
+		if err != nil {
+			return err
+		}
+		push(line, "")
 	}
 	return nil
 }
